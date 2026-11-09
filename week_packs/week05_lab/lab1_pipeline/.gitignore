@@ -1,0 +1,3 @@
+.cache/
+releases.log
+__pycache__/

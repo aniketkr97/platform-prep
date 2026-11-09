@@ -1,0 +1,40 @@
+# Week 6 lab: YOU fill in every TODO, from memory, before starting Prometheus.
+# SLO: 99.9% of /work requests succeed (non-5xx) over 30 days. Error budget = 0.1%.
+# Reference answer: K-c in week06_observability.md. Open it only after `promtool test rules` has run.
+#
+# Until the TODOs are filled, `promtool check rules slo_rules.yml` fails. That's expected.
+
+groups:
+  - name: toy-slo-recording
+    rules:
+      # SLI: the share of requests that failed, over each window.
+      - record: slo:sli_error:ratio_rate5m
+        expr: TODO
+      - record: slo:sli_error:ratio_rate30m
+        expr: TODO
+      - record: slo:sli_error:ratio_rate1h
+        expr: TODO
+      - record: slo:sli_error:ratio_rate6h
+        expr: TODO
+
+  - name: toy-slo-alerts
+    rules:
+      # Fast burn: page a human. Long window = is it real? Short window = is it still happening?
+      - alert: ToyAvailabilityFastBurn
+        expr: TODO
+        for: 1m
+        labels:
+          severity: page
+          slo: toy-availability
+        annotations:
+          summary: "Toy service burning its 30-day error budget fast"
+
+      # Slow burn: a ticket for working hours, not a page.
+      - alert: ToyAvailabilitySlowBurn
+        expr: TODO
+        for: 1m
+        labels:
+          severity: ticket
+          slo: toy-availability
+        annotations:
+          summary: "Toy service burning its 30-day error budget slowly"

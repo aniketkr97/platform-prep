@@ -1,0 +1,9 @@
+# Allows zero voluntary disruptions for app=web.
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: web-pdb
+spec:
+  maxUnavailable: 0
+  selector:
+    matchLabels: {app: web}

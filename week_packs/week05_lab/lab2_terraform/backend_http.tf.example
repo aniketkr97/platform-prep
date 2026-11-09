@@ -1,0 +1,9 @@
+# Part B: a REMOTE backend. Copy to backend.tf, then: terraform init -migrate-state
+# The lock lives in lock_server.py's store, not in this process.
+terraform {
+  backend "http" {
+    address        = "http://127.0.0.1:8765/state"
+    lock_address   = "http://127.0.0.1:8765/lock"
+    unlock_address = "http://127.0.0.1:8765/lock"
+  }
+}

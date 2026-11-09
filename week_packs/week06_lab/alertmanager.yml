@@ -1,0 +1,19 @@
+# Week 6 lab. Short timers so you can watch grouping, repeats and silences happen.
+route:
+  receiver: fake-pager
+  group_by: [slo]
+  group_wait: 10s
+  group_interval: 30s
+  repeat_interval: 2m
+
+receivers:
+  - name: fake-pager
+    webhook_configs:
+      - url: http://localhost:5001/
+        send_resolved: true
+
+# While a page is firing for an SLO, hold back the ticket for the same SLO.
+inhibit_rules:
+  - source_matchers: [severity="page"]
+    target_matchers: [severity="ticket"]
+    equal: [slo]

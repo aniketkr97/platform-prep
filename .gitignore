@@ -1,0 +1,11 @@
+# Personal files: kept locally, never pushed
+CLAUDE.md
+Prep_Plan.md
+tracker.md
+error_log.md
+interview_packs/
+
+# Junk
+.DS_Store
+__pycache__/
+*.pyc

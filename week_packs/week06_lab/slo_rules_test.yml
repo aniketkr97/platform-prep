@@ -1,0 +1,46 @@
+# Grader for your slo_rules.yml. It checks behaviour, not your exact PromQL.
+#   promtool test rules slo_rules_test.yml
+# Traffic: 20 req/s of 200s for 90 minutes. From minute 61, add 4 req/s of 500s (~17% errors).
+# Your recording rules must aggregate away every label (plain sum, no "by"),
+# so the alerts carry only severity and slo.
+
+rule_files:
+  - slo_rules.yml
+
+evaluation_interval: 1m
+
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'http_requests_total{job="toy",handler="/work",code="200"}'
+        values: '0+1200x90'
+      - series: 'http_requests_total{job="toy",handler="/work",code="500"}'
+        values: '0x60 240+240x29'
+
+    alert_rule_test:
+      # Healthy hour: nothing fires.
+      - eval_time: 59m
+        alertname: ToyAvailabilityFastBurn
+        exp_alerts: []
+      - eval_time: 59m
+        alertname: ToyAvailabilitySlowBurn
+        exp_alerts: []
+
+      # 15 minutes into a ~17% error rate: both burn alerts fire.
+      # (Alertmanager's inhibit rule is what holds the ticket back. promtool doesn't run Alertmanager.)
+      - eval_time: 75m
+        alertname: ToyAvailabilityFastBurn
+        exp_alerts:
+          - exp_labels:
+              severity: page
+              slo: toy-availability
+            exp_annotations:
+              summary: "Toy service burning its 30-day error budget fast"
+      - eval_time: 75m
+        alertname: ToyAvailabilitySlowBurn
+        exp_alerts:
+          - exp_labels:
+              severity: ticket
+              slo: toy-availability
+            exp_annotations:
+              summary: "Toy service burning its 30-day error budget slowly"
